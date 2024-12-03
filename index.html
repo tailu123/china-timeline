@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
         
@@ -95,6 +96,40 @@
             opacity: 1;
             transform: translateX(0);
         }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--china-gold);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            color: var(--china-red);
+        }
+
+        .success-animation {
+            animation: successPulse 2s infinite;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -111,6 +146,7 @@
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">历史成就</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">文化建设</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('gallery')">图片展示</button>
                 </div>
             </div>
         </div>
@@ -211,6 +247,80 @@
                     <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">文化传承</h3>
                     <div id="cultureChart" class="h-80"></div>
                 </div>
+            </div>
+        </section>
+
+        <!-- 新增图片展示区 -->
+        <section id="gallery" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">历史图片展示</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
+                    <img src="https://picsum.photos/400/300" alt="建国大典" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-[var(--china-gold)]">1949年 开国大典</h3>
+                    <p class="text-gray-300">毛泽东主席在天安门城楼上宣布中华人民共和国成立</p>
+                </div>
+                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
+                    <img src="https://picsum.photos/400/301" alt="改革开放" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-[var(--china-gold)]">1978年 改革开放</h3>
+                    <p class="text-gray-300">十一届三中全会开启改革开放新征程</p>
+                </div>
+                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
+                    <img src="https://picsum.photos/400/302" alt="北京奥运会" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-[var(--china-gold)]">2008年 北京奥运会</h3>
+                    <p class="text-gray-300">举办第29届夏季奥林匹克运动会</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图片查看器 -->
+        <div id="imageViewer" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center" onclick="hideImage()">
+            <div class="relative max-w-4xl mx-auto p-4">
+                <img id="viewerImage" src="" alt="" class="max-h-[80vh] max-w-full">
+                <p id="imageCaption" class="text-white text-center mt-4 text-lg"></p>
+                <button class="absolute top-4 right-4 text-white text-2xl" onclick="hideImage()">&times;</button>
+            </div>
+        </div>
+
+        <!-- 新增互动问答区 -->
+        <section id="quiz" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">历史知识问答</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">每日一题</h3>
+                    <div id="quizContent" class="space-y-4">
+                        <p class="text-gray-300" id="questionText">正在加载问题...</p>
+                        <div class="space-y-2" id="optionsContainer">
+                            <!-- 选项将通过JavaScript动态添加 -->
+                        </div>
+                        <button onclick="checkAnswer()" class="btn bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white w-full mt-4">
+                            提交答案
+                        </button>
+                    </div>
+                </div>
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">答题统计</h3>
+                    <div id="quizStats" class="h-80"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 新增反馈区 -->
+        <section id="feedback" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">意见反馈</h2>
+            <div class="achievement-card p-6 max-w-2xl mx-auto">
+                <form onsubmit="handleFeedback(event)" class="space-y-4">
+                    <div>
+                        <label class="text-[var(--china-gold)]">您的称呼</label>
+                        <input type="text" class="w-full bg-gray-800 rounded p-2 mt-1" required>
+                    </div>
+                    <div>
+                        <label class="text-[var(--china-gold)]">反馈内容</label>
+                        <textarea class="w-full bg-gray-800 rounded p-2 mt-1 h-32" required></textarea>
+                    </div>
+                    <button type="submit" class="btn bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white w-full">
+                        提交反馈
+                    </button>
+                </form>
             </div>
         </section>
     </main>
@@ -413,6 +523,218 @@
                     }, 100);
                 });
             });
+        });
+
+        // 图片查看器功能
+        function showImage(element) {
+            const viewer = document.getElementById('imageViewer');
+            const viewerImage = document.getElementById('viewerImage');
+            const caption = document.getElementById('imageCaption');
+            const img = element.querySelector('img');
+            const title = element.querySelector('h3').textContent;
+            const desc = element.querySelector('p').textContent;
+
+            viewerImage.src = img.src;
+            viewerImage.alt = img.alt;
+            caption.textContent = `${title} - ${desc}`;
+            viewer.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideImage() {
+            const viewer = document.getElementById('imageViewer');
+            viewer.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // 添加键盘事件监听
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideImage();
+            }
+        });
+
+        // 为所有成就卡片添加悬停动画
+        document.querySelectorAll('.achievement-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                anime({
+                    targets: card,
+                    scale: 1.05,
+                    duration: 300,
+                    easing: 'easeOutExpo'
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                anime({
+                    targets: card,
+                    scale: 1,
+                    duration: 300,
+                    easing: 'easeOutExpo'
+                });
+            });
+        });
+
+        // 问答功能
+        const questions = [
+            {
+                question: "中华人民共和国成立于哪一年？",
+                options: ["1948年", "1949年", "1950年", "1951年"],
+                correct: 1
+            },
+            {
+                question: "改革开放政策开始于哪一年？",
+                options: ["1976年", "1977年", "1978年", "1979年"],
+                correct: 2
+            },
+            {
+                question: "第一颗原子弹爆炸成功的年份是？",
+                options: ["1962年", "1963年", "1964年", "1965年"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let totalAnswered = 0;
+
+        function loadQuestion() {
+            try {
+                const question = questions[currentQuestion];
+                document.getElementById('questionText').textContent = question.question;
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'btn btn-outline w-full text-white';
+                    button.textContent = option;
+                    button.onclick = () => selectOption(index);
+                    optionsContainer.appendChild(button);
+                });
+            } catch (error) {
+                console.error('加载问题时出错:', error);
+                document.getElementById('questionText').textContent = '加载问题时出错，请刷新页面重试';
+            }
+        }
+
+        let selectedOption = null;
+
+        function selectOption(index) {
+            document.querySelectorAll('#optionsContainer button').forEach((btn, i) => {
+                btn.classList.remove('bg-[var(--china-red)]');
+                if (i === index) {
+                    btn.classList.add('bg-[var(--china-red)]');
+                }
+            });
+            selectedOption = index;
+        }
+
+        function checkAnswer() {
+            try {
+                if (selectedOption === null) {
+                    Swal.fire({
+                        title: '请选择答案',
+                        icon: 'warning',
+                        confirmButtonColor: 'var(--china-red)'
+                    });
+                    return;
+                }
+
+                const correct = questions[currentQuestion].correct === selectedOption;
+                if (correct) correctAnswers++;
+                totalAnswered++;
+
+                Swal.fire({
+                    title: correct ? '回答正确！' : '回答错误',
+                    text: correct ? '继续保持！' : `正确答案是：${questions[currentQuestion].options[questions[currentQuestion].correct]}`,
+                    icon: correct ? 'success' : 'error',
+                    confirmButtonColor: 'var(--china-red)'
+                }).then(() => {
+                    currentQuestion = (currentQuestion + 1) % questions.length;
+                    selectedOption = null;
+                    loadQuestion();
+                    updateQuizStats();
+                });
+            } catch (error) {
+                console.error('检查答案时出错:', error);
+                Swal.fire({
+                    title: '发生错误',
+                    text: '请刷新页面重试',
+                    icon: 'error',
+                    confirmButtonColor: 'var(--china-red)'
+                });
+            }
+        }
+
+        function updateQuizStats() {
+            try {
+                const statsChart = echarts.init(document.getElementById('quizStats'));
+                statsChart.setOption({
+                    title: { text: '答题统计', textStyle: { color: '#fff' } },
+                    tooltip: { trigger: 'item' },
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        data: [
+                            { value: correctAnswers, name: '正确', itemStyle: { color: '#52c41a' } },
+                            { value: totalAnswered - correctAnswers, name: '错误', itemStyle: { color: 'var(--china-red)' } }
+                        ]
+                    }],
+                    backgroundColor: 'transparent',
+                    textStyle: { color: '#fff' }
+                });
+            } catch (error) {
+                console.error('更新统计图表时出错:', error);
+                document.getElementById('quizStats').innerHTML = '<div class="chart-error">加载统计数据失败</div>';
+            }
+        }
+
+        // 反馈处理
+        function handleFeedback(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.querySelector('input').value;
+            const feedback = form.querySelector('textarea').value;
+
+            try {
+                // 这里可以添加实际的反馈提交逻辑
+                console.log('反馈信息:', { name, feedback });
+                
+                Swal.fire({
+                    title: '感谢您的反馈！',
+                    text: '我们会认真考虑您的建议',
+                    icon: 'success',
+                    confirmButtonColor: 'var(--china-red)'
+                });
+
+                form.reset();
+            } catch (error) {
+                console.error('提交反馈时出错:', error);
+                Swal.fire({
+                    title: '提交失败',
+                    text: '请稍后重试',
+                    icon: 'error',
+                    confirmButtonColor: 'var(--china-red)'
+                });
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                loadQuestion();
+                updateQuizStats();
+                // ... existing initialization code ...
+            } catch (error) {
+                console.error('页面初始化时出错:', error);
+                Swal.fire({
+                    title: '页面加载出错',
+                    text: '请刷新页面重试',
+                    icon: 'error',
+                    confirmButtonColor: 'var(--china-red)'
+                });
+            }
         });
     </script>
 </body>
