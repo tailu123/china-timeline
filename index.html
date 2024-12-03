@@ -130,23 +130,124 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        /* 移动端优化样式 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 80%;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(10px);
+                transition: 0.3s ease-in-out;
+                padding: 2rem;
+                z-index: 100;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-menu .btn {
+                display: block;
+                width: 100%;
+                margin: 1rem 0;
+                text-align: left;
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+            }
+
+            .hero-section {
+                height: 60vh;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem !important;
+            }
+
+            .achievement-card {
+                margin: 0.5rem;
+            }
+
+            .chart-container {
+                height: 300px !important;
+            }
+
+            .timeline-item {
+                padding-left: 2rem;
+            }
+
+            .timeline-item::before {
+                left: 0;
+            }
+
+            .timeline-item::after {
+                left: -6px;
+            }
+        }
+
+        /* 触摸反馈效果 */
+        @media (hover: none) {
+            .achievement-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s;
+            }
+
+            .btn:active {
+                opacity: 0.8;
+            }
+        }
+
+        /* 下拉刷新指示器 */
+        .pull-to-refresh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--deep-red);
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .pull-to-refresh.active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="min-h-screen">
-    <div class="progress-bar" style="width: 0%"></div>
-    
-    <nav class="fixed top-0 w-full bg-black bg-opacity-50 backdrop-blur-md z-50">
+    <!-- 下拉刷新指示器 -->
+    <div class="pull-to-refresh">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 移动端导航菜单按钮 -->
+    <button class="mobile-menu-btn fixed top-4 right-4 z-50 bg-transparent border-none hidden">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+    </button>
+
+    <nav class="fixed top-0 w-full bg-black bg-opacity-50 backdrop-blur-md z-40">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--china-red)] to-[var(--china-gold)]">
                     新中国发展历程
                 </h1>
-                <div class="space-x-4">
+                <div class="nav-menu space-y-2 md:space-y-0 md:space-x-4">
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('timeline')">重大事件</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">历史成就</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">文化建设</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('gallery')">图片展示</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">��化建设</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('quiz')">知识问答</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('feedback')">意见反馈</button>
                 </div>
             </div>
         </div>
@@ -575,22 +676,67 @@
             });
         });
 
-        // 问答功能
+        // 历史问题数据
         const questions = [
             {
                 question: "中华人民共和国成立于哪一年？",
                 options: ["1948年", "1949年", "1950年", "1951年"],
-                correct: 1
+                correct: 1,
+                explanation: "1949年10月1日，毛泽东主席在天安门城楼上宣布中华人民共和国成立。"
             },
             {
                 question: "改革开放政策开始于哪一年？",
                 options: ["1976年", "1977年", "1978年", "1979年"],
-                correct: 2
+                correct: 2,
+                explanation: "1978年12月，党的十一届三中全会召开，确立改革开放基本国策。"
             },
             {
                 question: "第一颗原子弹爆炸成功的年份是？",
                 options: ["1962年", "1963年", "1964年", "1965年"],
-                correct: 2
+                correct: 2,
+                explanation: "1964年10月16日，中国第一颗原子弹爆炸成功，成为世界第五个核国家。"
+            },
+            {
+                question: "中国第一颗人造地球卫星发射成功的时间是？",
+                options: ["1969年", "1970年", "1971年", "1972年"],
+                correct: 1,
+                explanation: "1970年4月24日，"东方红一号"卫星发射成功，中国成为世界第五个独立发射人造卫星的国家。"
+            },
+            {
+                question: "中国恢复联合国合法席位的年份是？",
+                options: ["1970年", "1971年", "1972年", "1973年"],
+                correct: 1,
+                explanation: "1971年10月25日，第26届联合国大会通过决议，恢复中华人民共和国在联合国的一切合法权利。"
+            },
+            {
+                question: "中国第一次载人航天飞行成功的年份是？",
+                options: ["2001年", "2002年", "2003年", "2004年"],
+                correct: 2,
+                explanation: "2003年10月15日，神舟五号载人飞船成功发射，杨利伟成为中国首位太空人。"
+            },
+            {
+                question: "北京奥运会举办的时间是？",
+                options: ["2007年", "2008年", "2009年", "2010年"],
+                correct: 1,
+                explanation: "2008年8月8日，第29届夏季奥林匹克运动会在北京开幕。"
+            },
+            {
+                question: "中国加入世界贸易组织(WTO)的时间是？",
+                options: ["2000年", "2001年", "2002年", "2003年"],
+                correct: 1,
+                explanation: "2001年12月11日，中国正式加入世界贸易组织(WTO)。"
+            },
+            {
+                question: "香港回归祖国的时间是？",
+                options: ["1996年", "1997年", "1998年", "1999年"],
+                correct: 1,
+                explanation: "1997年7月1日，中国恢复对香港行使主权，香港特别行政区成立。"
+            },
+            {
+                question: "澳门回归祖国的时间是？",
+                options: ["1998年", "1999年", "2000年", "2001年"],
+                correct: 1,
+                explanation: "1999年12月20日，中国恢复对澳门行使主权，澳门特别行政区成立。"
             }
         ];
 
@@ -647,7 +793,7 @@
 
                 Swal.fire({
                     title: correct ? '回答正确！' : '回答错误',
-                    text: correct ? '继续保持！' : `正确答案是：${questions[currentQuestion].options[questions[currentQuestion].correct]}`,
+                    text: questions[currentQuestion].explanation,
                     icon: correct ? 'success' : 'error',
                     confirmButtonColor: 'var(--china-red)'
                 }).then(() => {
@@ -671,18 +817,60 @@
             try {
                 const statsChart = echarts.init(document.getElementById('quizStats'));
                 statsChart.setOption({
-                    title: { text: '答题统计', textStyle: { color: '#fff' } },
-                    tooltip: { trigger: 'item' },
+                    title: { 
+                        text: '答题统计', 
+                        textStyle: { color: '#fff' },
+                        subtext: `总答题数：${totalAnswered}  正确率：${((correctAnswers/totalAnswered)*100 || 0).toFixed(1)}%`,
+                        subtextStyle: { color: '#fff' }
+                    },
+                    tooltip: { 
+                        trigger: 'item',
+                        formatter: '{b}: {c}题 ({d}%)'
+                    },
                     series: [{
                         type: 'pie',
                         radius: ['40%', '70%'],
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: true,
+                            color: '#fff',
+                            formatter: '{b}: {c}题\n{d}%'
+                        },
                         data: [
-                            { value: correctAnswers, name: '正确', itemStyle: { color: '#52c41a' } },
-                            { value: totalAnswered - correctAnswers, name: '错误', itemStyle: { color: 'var(--china-red)' } }
-                        ]
+                            { 
+                                value: correctAnswers, 
+                                name: '正确', 
+                                itemStyle: { 
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        {offset: 0, color: '#52c41a'},
+                                        {offset: 1, color: '#28a745'}
+                                    ])
+                                }
+                            },
+                            { 
+                                value: totalAnswered - correctAnswers, 
+                                name: '错误', 
+                                itemStyle: { 
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        {offset: 0, color: '#ff4d4f'},
+                                        {offset: 1, color: '#cf1322'}
+                                    ])
+                                }
+                            }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
                     }],
-                    backgroundColor: 'transparent',
-                    textStyle: { color: '#fff' }
+                    backgroundColor: 'transparent'
                 });
             } catch (error) {
                 console.error('更新统计图表时出错:', error);
@@ -735,6 +923,142 @@
                     confirmButtonColor: 'var(--china-red)'
                 });
             }
+        });
+
+        // 移动端菜单控制
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navMenu = document.querySelector('.nav-menu');
+        let menuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            navMenu.classList.toggle('active');
+            mobileMenuBtn.innerHTML = menuOpen 
+                ? '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                : '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>';
+        });
+
+        // 点击导航链接后关闭菜单
+        document.querySelectorAll('.nav-menu .btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    navMenu.classList.remove('active');
+                    menuOpen = false;
+                    mobileMenuBtn.innerHTML = '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>';
+                }
+            });
+        });
+
+        // 下拉刷新功能
+        let touchStartY = 0;
+        let pullStarted = false;
+        const pullToRefresh = document.querySelector('.pull-to-refresh');
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const touchY = e.touches[0].clientY;
+            const scroll = window.scrollY;
+            
+            if (scroll <= 0 && touchY > touchStartY && !pullStarted) {
+                pullStarted = true;
+                pullToRefresh.classList.add('active');
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (pullStarted) {
+                pullStarted = false;
+                pullToRefresh.classList.remove('active');
+                location.reload();
+            }
+        });
+
+        // 图表响应式调整
+        function updateChartSize() {
+            const charts = [gdpChart, tradeChart, educationChart, cultureChart, statsChart].filter(Boolean);
+            charts.forEach(chart => {
+                try {
+                    chart.resize();
+                } catch (error) {
+                    console.error('调整图表大小时出错:', error);
+                }
+            });
+        }
+
+        // 监听屏幕旋转
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateChartSize, 300);
+        });
+
+        // 优化触摸事件
+        document.querySelectorAll('.achievement-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+
+            card.addEventListener('touchend', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // 优化移动端图片查看
+        let touchStartX = 0;
+        let currentImageIndex = 0;
+        const images = document.querySelectorAll('.gallery-image');
+
+        document.getElementById('imageViewer').addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.getElementById('imageViewer').addEventListener('touchmove', (e) => {
+            const touchX = e.touches[0].clientX;
+            const diff = touchStartX - touchX;
+
+            if (Math.abs(diff) > 50) {
+                e.preventDefault();
+                if (diff > 0 && currentImageIndex < images.length - 1) {
+                    currentImageIndex++;
+                    showImageByIndex(currentImageIndex);
+                } else if (diff < 0 && currentImageIndex > 0) {
+                    currentImageIndex--;
+                    showImageByIndex(currentImageIndex);
+                }
+                touchStartX = touchX;
+            }
+        });
+
+        function showImageByIndex(index) {
+            const image = images[index];
+            if (image) {
+                const viewer = document.getElementById('imageViewer');
+                const viewerImage = document.getElementById('viewerImage');
+                viewerImage.src = image.src;
+                viewerImage.alt = image.alt;
+            }
+        }
+
+        // 初始化移动端优化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检测是否为移动设备
+            if (window.innerWidth <= 768) {
+                mobileMenuBtn.style.display = 'block';
+            }
+
+            // 优化图表尺寸
+            updateChartSize();
+        });
+
+        // 确保时间线在所有设备上都可见
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineSection = document.getElementById('timeline');
+            if (timelineSection) {
+                timelineSection.style.display = 'block';
+            }
+            // ... existing initialization code ...
         });
     </script>
 </body>
