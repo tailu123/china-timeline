@@ -1,682 +1,379 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新中国发展历程 - 互动展示</title>
+    <title>新中国历史</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
-        
+
         :root {
-            --china-red: #DE2910;
-            --china-gold: #FFDE00;
-            --deep-red: #8B0000;
+            --primary-red: #c41e3a;
+            --gold: #FFD700;
+            --bg-gradient: linear-gradient(135deg, #c41e3a 0%, #8B0000 100%);
         }
-        
+
         body {
             font-family: 'Noto Serif SC', serif;
-            background: linear-gradient(135deg, var(--deep-red) 0%, #1a1a1a 100%);
-            color: #ffffff;
+            background: var(--bg-gradient);
+            color: var(--gold);
+            min-height: 100vh;
+            background-attachment: fixed;
         }
-        
-        .achievement-card {
-            background: rgba(222, 41, 16, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 222, 0, 0.1);
-        }
-        
-        .achievement-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(222, 41, 16, 0.2);
-            border-color: var(--china-gold);
-        }
-        
+
         .hero-section {
-            background: linear-gradient(rgba(139, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
-                        url('https://images.unsplash.com/photo-1577706881850-bf7c7d8906a5?ixlib=rb-4.0.3') center/cover;
-            height: 80vh;
+            background-image: url('https://images.unsplash.com/photo-1516094593816-df6d39d4c048');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .progress-bar {
-            height: 4px;
-            background: linear-gradient(90deg, var(--china-red) 0%, var(--china-gold) 100%);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
+            flex-direction: column;
+            text-align: center;
         }
 
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
+        .section-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-5px);
         }
 
         .timeline-item {
             position: relative;
+            padding: 2rem;
             padding-left: 3rem;
+            margin-left: 2rem;
+            border-left: 2px solid var(--gold);
             margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
         }
 
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background: var(--china-gold);
+            left: -10px;
+            top: 2.5rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+            transition: all 0.3s ease;
         }
 
-        .timeline-item::after {
+        .timeline-item:hover::before {
+            transform: scale(1.2);
+            box-shadow: 0 0 25px var(--gold);
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-card:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .stats-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-option {
+            cursor: pointer;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(10px);
+        }
+
+        .selected {
+            background: rgba(255, 215, 0, 0.3);
+            border-width: 2px;
+        }
+
+        .correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .nav-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button::after {
             content: '';
             position: absolute;
-            left: -6px;
-            top: 0;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--china-red);
-            border: 2px solid var(--china-gold);
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
         }
 
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateX(0);
+        .nav-button:hover::after {
+            width: 100%;
         }
 
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid var(--china-gold);
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .floating {
+            animation: float 3s ease-in-out infinite;
         }
 
-        .chart-error {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 300px;
-            background: rgba(255, 0, 0, 0.1);
-            border-radius: 8px;
-            color: var(--china-red);
-        }
-
-        .success-animation {
-            animation: successPulse 2s infinite;
-        }
-
-        @keyframes successPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* 移动端优化样式 */
         @media (max-width: 768px) {
-            .nav-menu {
-                position: fixed;
-                top: 0;
-                left: -100%;
-                width: 80%;
-                height: 100vh;
-                background: rgba(0, 0, 0, 0.95);
-                backdrop-filter: blur(10px);
-                transition: 0.3s ease-in-out;
-                padding: 2rem;
-                z-index: 100;
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-            .nav-menu .btn {
-                display: block;
-                width: 100%;
-                margin: 1rem 0;
-                text-align: left;
-            }
-
-            .mobile-menu-btn {
-                display: block !important;
-            }
-
-            .hero-section {
-                height: 60vh;
-            }
-
-            .hero-section h1 {
-                font-size: 2.5rem !important;
-            }
-
-            .achievement-card {
-                margin: 0.5rem;
-            }
-
-            .chart-container {
-                height: 300px !important;
+            .section-card {
+                margin: 1rem;
+                padding: 1rem;
             }
 
             .timeline-item {
+                margin-left: 1rem;
                 padding-left: 2rem;
             }
 
-            .timeline-item::before {
-                left: 0;
+            .hero-section {
+                height: 40vh;
             }
-
-            .timeline-item::after {
-                left: -6px;
-            }
-        }
-
-        /* 触摸反馈效果 */
-        @media (hover: none) {
-            .achievement-card:active {
-                transform: scale(0.98);
-                transition: transform 0.1s;
-            }
-
-            .btn:active {
-                opacity: 0.8;
-            }
-        }
-
-        /* 下拉刷新指示器 */
-        .pull-to-refresh {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--deep-red);
-            transform: translateY(-100%);
-            transition: transform 0.3s;
-        }
-
-        .pull-to-refresh.active {
-            transform: translateY(0);
         }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- 下拉刷新指示器 -->
-    <div class="pull-to-refresh">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- 移动端导航菜单按钮 -->
-    <button class="mobile-menu-btn fixed top-4 right-4 z-50 bg-transparent border-none hidden">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
-        </svg>
-    </button>
-
-    <nav class="fixed top-0 w-full bg-black bg-opacity-50 backdrop-blur-md z-40">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--china-red)] to-[var(--china-gold)]">
-                    新中国发展历程
-                </h1>
-                <div class="nav-menu space-y-2 md:space-y-0 md:space-x-4">
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('timeline')">重大事件</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">历史成就</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">��化建设</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('quiz')">知识问答</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('feedback')">意见反馈</button>
-                </div>
+    <nav class="sticky top-0 z-50 bg-black bg-opacity-60 backdrop-blur-md p-4 border-b border-gold/20">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+                新中国历史
+            </h1>
+            <div class="space-x-6">
+                <button class="nav-button btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">重大历史事件</button>
+                <button class="nav-button btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
+                <button class="nav-button btn btn-ghost btn-sm" onclick="scrollToSection('culture')">文化建设</button>
+                <button class="nav-button btn btn-ghost btn-sm" onclick="scrollToSection('quiz')">知识问答</button>
             </div>
         </div>
     </nav>
 
-    <section class="hero-section">
-        <div class="text-center">
-            <h1 class="text-6xl font-bold mb-6 animate-text bg-gradient-to-r from-[var(--china-red)] via-[var(--china-gold)] to-[var(--china-red)] bg-clip-text text-transparent">
-                新中国发展历程
-            </h1>
-            <p class="text-xl text-gray-300">见证七十余载辉煌历程</p>
+    <div class="hero-section">
+        <div class="hero-overlay">
+            <h1 class="text-5xl font-bold text-white mb-4">新中国发展历程</h1>
+            <p class="text-xl text-gray-200">见证辉煌历史 展望美好未来</p>
         </div>
-    </section>
+    </div>
 
-    <main class="container mx-auto px-4 py-20">
-        <section id="timeline" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">重大历史事件</h2>
+    <main class="container mx-auto p-4">
+        <section id="achievements" class="section-card">
+            <h2 class="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+                重大历史事件
+            </h2>
             <div class="timeline">
                 <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1949年10月1日</h3>
-                        <p class="text-white">中华人民共和国成立，毛泽东主席在天安门城楼上宣布开国大典。</p>
-                    </div>
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf" alt="天安门" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-yellow-400">1949年10月1日</h3>
+                    <p class="mt-2">中华人民共和国成立，毛泽东主席在天安门城楼上宣布开国大典</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1956年</h3>
-                        <p class="text-white">社会主义改造基本完成，确立社会主义基本制度。</p>
-                    </div>
+                    <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b" alt="改革开放" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-yellow-400">1978年12月</h3>
+                    <p class="mt-2">改革开放政策开始实施，十一届三中全会召开</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1964年10月16日</h3>
-                        <p class="text-white">中国第一颗原子弹爆炸成功，成为世界第五个核国家。</p>
-                    </div>
+                    <img src="https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9" alt="WTO" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-yellow-400">2001年12月11日</h3>
+                    <p class="mt-2">中国正式加入世界贸易组织(WTO)</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1978年12月</h3>
-                        <p class="text-white">十一届三中全会召开，确立改革开放基本国策。</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2001年12月11日</h3>
-                        <p class="text-white">中国正式加入世界贸易组织(WTO)。</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2008年8月8日</h3>
-                        <p class="text-white">北京奥运会开幕，展现中国大国风采。</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
-                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2020年</h3>
-                        <p class="text-white">全面建成小康社会，实现第一个百年奋斗目标。</p>
-                    </div>
+                    <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d" alt="奥运会" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-yellow-400">2008年8月8日</h3>
+                    <p class="mt-2">北京奥运会开幕，展现中国实力</p>
                 </div>
             </div>
         </section>
 
-        <section id="achievements" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">历史性成就</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">工业发展</h3>
-                    <p class="text-gray-300">从"两弹一星"到"神舟飞天"，从"嫦娥探月"到"天问探火"，见证中国航天工业腾飞。</p>
-                </div>
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">脱贫攻坚</h3>
-                    <p class="text-gray-300">8年时间，近1亿人脱贫，832个贫困县全部摘帽，创造人类减贫史奇迹。</p>
-                </div>
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">科技创新</h3>
-                    <p class="text-gray-300">从5G技术到量子通信，从高铁技术到北斗导航，引领全球科技创新。</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="economy" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">经济发展</h2>
+        <section id="economy" class="section-card">
+            <h2 class="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+                经济发展
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="chart-container h-96" id="gdpChart"></div>
-                <div class="chart-container h-96" id="tradeChart"></div>
+                <div class="stats-card floating">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="改革开放" class="stats-card-image">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">改革开放成就</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            从1978年到2021年，中国GDP年均增长约9.5%
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            成为世界第二大经济体
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            对外贸易总额突破6万亿美元
+                        </li>
+                    </ul>
+                </div>
+                <div class="stats-card floating" style="animation-delay: 0.5s">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475" alt="科技创新" class="stats-card-image">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">科技创新</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            载人航天、深海探测、超级计算机等领域取得重大突破
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            5G技术全球领先
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            数字经济蓬勃发展
+                        </li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <section id="culture" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">文化建设</h2>
+        <section id="culture" class="section-card">
+            <h2 class="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+                文化建设
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">教育发展</h3>
-                    <div id="educationChart" class="h-80"></div>
+                <div class="stats-card floating">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1" alt="教育发展" class="stats-card-image">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">教育发展</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            九年义务教育全面普及
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            高等教育毛入学率超过50%
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            教育经费投入持续增加
+                        </li>
+                    </ul>
                 </div>
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">文化传承</h3>
-                    <div id="cultureChart" class="h-80"></div>
+                <div class="stats-card floating" style="animation-delay: 0.5s">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23" alt="文化传承" class="stats-card-image">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">文化传承</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            非物质文化遗产保护工作全面开展
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            传统文化创新发展
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">●</span>
+                            文化产业蓬勃发展
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>
 
-        <!-- 新增图片展示区 -->
-        <section id="gallery" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">历史图片展示</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
-                    <img src="https://picsum.photos/400/300" alt="建国大典" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <h3 class="text-xl font-bold text-[var(--china-gold)]">1949年 开国大典</h3>
-                    <p class="text-gray-300">毛泽东主席在天安门城楼上宣布中华人民共和国成立</p>
-                </div>
-                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
-                    <img src="https://picsum.photos/400/301" alt="改革开放" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <h3 class="text-xl font-bold text-[var(--china-gold)]">1978年 改革开放</h3>
-                    <p class="text-gray-300">十一届三中全会开启改革开放新征程</p>
-                </div>
-                <div class="achievement-card p-6 hover:scale-105 transition-transform cursor-pointer" onclick="showImage(this)">
-                    <img src="https://picsum.photos/400/302" alt="北京奥运会" class="w-full h-48 object-cover rounded-lg mb-4">
-                    <h3 class="text-xl font-bold text-[var(--china-gold)]">2008年 北京奥运会</h3>
-                    <p class="text-gray-300">举办第29届夏季奥林匹克运动会</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 图片查看器 -->
-        <div id="imageViewer" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex items-center justify-center" onclick="hideImage()">
-            <div class="relative max-w-4xl mx-auto p-4">
-                <img id="viewerImage" src="" alt="" class="max-h-[80vh] max-w-full">
-                <p id="imageCaption" class="text-white text-center mt-4 text-lg"></p>
-                <button class="absolute top-4 right-4 text-white text-2xl" onclick="hideImage()">&times;</button>
-            </div>
-        </div>
-
-        <!-- 新增互动问答区 -->
-        <section id="quiz" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">历史知识问答</h2>
+        <section id="quiz" class="section-card">
+            <h2 class="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+                历史知识问答
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">每日一题</h3>
-                    <div id="quizContent" class="space-y-4">
-                        <p class="text-gray-300" id="questionText">正在加载问题...</p>
-                        <div class="space-y-2" id="optionsContainer">
-                            <!-- 选项将通过JavaScript动态添加 -->
-                        </div>
-                        <button onclick="checkAnswer()" class="btn bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white w-full mt-4">
+                <div class="stats-card">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">每日一题</h3>
+                    <div id="quiz-container">
+                        <div id="question" class="mb-6"></div>
+                        <div id="options" class="space-y-4"></div>
+                        <div id="explanation" class="mt-6 p-4 rounded-lg bg-black bg-opacity-30 hidden"></div>
+                        <button id="submit-answer" class="btn btn-outline btn-warning mt-6 w-full hover:scale-105 transition-transform">
                             提交答案
                         </button>
                     </div>
                 </div>
-                <div class="achievement-card p-6">
-                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">答题统计</h3>
-                    <div id="quizStats" class="h-80"></div>
+                <div class="stats-card">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4">答题统计</h3>
+                    <canvas id="stats-chart"></canvas>
                 </div>
-            </div>
-        </section>
-
-        <!-- 新增反馈区 -->
-        <section id="feedback" class="mb-20">
-            <h2 class="text-4xl font-bold mb-10 text-center">意见反馈</h2>
-            <div class="achievement-card p-6 max-w-2xl mx-auto">
-                <form onsubmit="handleFeedback(event)" class="space-y-4">
-                    <div>
-                        <label class="text-[var(--china-gold)]">您的称呼</label>
-                        <input type="text" class="w-full bg-gray-800 rounded p-2 mt-1" required>
-                    </div>
-                    <div>
-                        <label class="text-[var(--china-gold)]">反馈内容</label>
-                        <textarea class="w-full bg-gray-800 rounded p-2 mt-1 h-32" required></textarea>
-                    </div>
-                    <button type="submit" class="btn bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white w-full">
-                        提交反馈
-                    </button>
-                </form>
             </div>
         </section>
     </main>
 
-    <!-- 添加页脚 -->
-    <footer class="bg-black bg-opacity-50 backdrop-blur-md py-10">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div>
-                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">关于本站</h3>
-                    <p class="text-gray-300">致力于展现新中国发展历程<br>见证伟大复兴征程</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">数据来源</h3>
-                    <p class="text-gray-300">国家统计局<br>中国政府网<br>人民网</p>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">联系我们</h3>
-                    <p class="text-gray-300">邮箱：info@example.com<br>电话：123-456-7890</p>
-                </div>
-            </div>
-            <div class="text-center mt-8 pt-8 border-t border-gray-800">
-                <p class="text-gray-400">© 2023 新中国发展历程 版权所有</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- 返回顶部按钮 -->
-    <button id="backToTop" class="fixed bottom-8 right-8 bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white p-4 rounded-full shadow-lg opacity-0 transition-all duration-300 cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-    </button>
-
     <script>
-        // 页面滚动进度条
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.querySelector(".progress-bar").style.width = scrolled + "%";
-
-            // 时间线动画
-            document.querySelectorAll('.timeline-item').forEach(item => {
-                const rect = item.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 100) {
-                    item.classList.add('visible');
-                }
-            });
+        // 动画效果
+        anime({
+            targets: '.section-card',
+            opacity: [0, 1],
+            translateY: [50, 0],
+            duration: 1000,
+            delay: anime.stagger(200),
+            easing: 'easeOutExpo'
         });
 
-        // 平滑滚动
-        function scrollToSection(sectionId) {
-            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        // 滚动到指定部分
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({
+                behavior: 'smooth'
+            });
         }
 
-        // 图表初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            // GDP增长图表
-            const gdpChart = echarts.init(document.getElementById('gdpChart'));
-            gdpChart.setOption({
-                title: { text: 'GDP增长趋势（单位：亿元）', textStyle: { color: '#fff' } },
-                tooltip: { trigger: 'axis' },
-                xAxis: { type: 'category', data: ['1949', '1960', '1980', '2000', '2010', '2020'] },
-                yAxis: { type: 'value' },
-                series: [{
-                    data: [100, 1500, 4500, 99776, 412119, 1015986],
-                    type: 'line',
-                    smooth: true,
-                    areaStyle: {
-                        opacity: 0.3,
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0, color: '#DE2910' },
-                            { offset: 1, color: '#8B0000' }
-                        ])
-                    },
-                    itemStyle: { color: '#DE2910' }
-                }],
-                backgroundColor: 'transparent',
-                textStyle: { color: '#fff' }
-            });
-
-            // 对外贸易图表
-            const tradeChart = echarts.init(document.getElementById('tradeChart'));
-            tradeChart.setOption({
-                title: { text: '对外贸易发展（单位：亿美元）', textStyle: { color: '#fff' } },
-                tooltip: { trigger: 'axis' },
-                xAxis: { type: 'category', data: ['1950', '1980', '2000', '2010', '2020'] },
-                yAxis: { type: 'value' },
-                series: [{
-                    name: '进口',
-                    type: 'bar',
-                    data: [11.8, 200, 2250, 13948, 20556],
-                    itemStyle: { color: '#DE2910' }
-                }, {
-                    name: '出口',
-                    type: 'bar',
-                    data: [5.5, 181, 2492, 15778, 25910],
-                    itemStyle: { color: '#FFDE00' }
-                }],
-                backgroundColor: 'transparent',
-                textStyle: { color: '#fff' }
-            });
-
-            // 教育发展图表
-            const educationChart = echarts.init(document.getElementById('educationChart'));
-            educationChart.setOption({
-                title: { text: '2020年教育事业发展（万人）', textStyle: { color: '#fff' } },
-                tooltip: { trigger: 'item' },
-                series: [{
-                    type: 'pie',
-                    radius: ['40%', '70%'],
-                    data: [
-                        { value: 3268, name: '高等教育在校生' },
-                        { value: 4803, name: '中等教育在校生' },
-                        { value: 10712, name: '义务教育在校生' }
-                    ],
-                    itemStyle: {
-                        color: function(params) {
-                            const colors = ['#DE2910', '#FFDE00', '#8B0000'];
-                            return colors[params.dataIndex];
-                        }
-                    }
-                }],
-                backgroundColor: 'transparent',
-                textStyle: { color: '#fff' }
-            });
-
-            // 文化发展图表
-            const cultureChart = echarts.init(document.getElementById('cultureChart'));
-            cultureChart.setOption({
-                title: { text: '文化产业增加值（亿元）', textStyle: { color: '#fff' } },
-                tooltip: { trigger: 'axis' },
-                xAxis: { type: 'category', data: ['2012', '2014', '2016', '2018', '2020'] },
-                yAxis: { type: 'value' },
-                series: [{
-                    data: [18587, 23940, 30785, 38737, 44363],
-                    type: 'line',
-                    smooth: true,
-                    itemStyle: { color: '#DE2910' }
-                }],
-                backgroundColor: 'transparent',
-                textStyle: { color: '#fff' }
-            });
-
-            // 响应式调整
-            window.addEventListener('resize', () => {
-                gdpChart.resize();
-                tradeChart.resize();
-                educationChart.resize();
-                cultureChart.resize();
-            });
-
-            // 返回顶部按钮逻辑
-            const backToTopButton = document.getElementById('backToTop');
-            
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 500) {
-                    backToTopButton.style.opacity = '1';
-                } else {
-                    backToTopButton.style.opacity = '0';
-                }
-            });
-
-            backToTopButton.addEventListener('click', () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-
-            // 添加页面载入动画
-            document.addEventListener('DOMContentLoaded', () => {
-                // 原有的图表初始化代码保持不变
-                // ... existing chart initialization code ...
-
-                // 添加入场动画
-                anime({
-                    targets: '.achievement-card',
-                    translateY: [50, 0],
-                    opacity: [0, 1],
-                    duration: 1500,
-                    delay: anime.stagger(200),
-                    easing: 'easeOutExpo'
-                });
-
-                // 为标题添加打字机效果
-                const titles = document.querySelectorAll('h2');
-                titles.forEach(title => {
-                    const text = title.textContent;
-                    title.textContent = '';
-                    let index = 0;
-                    const interval = setInterval(() => {
-                        if (index < text.length) {
-                            title.textContent += text[index];
-                            index++;
-                        } else {
-                            clearInterval(interval);
-                        }
-                    }, 100);
-                });
-            });
-        });
-
-        // 图片查看器功能
-        function showImage(element) {
-            const viewer = document.getElementById('imageViewer');
-            const viewerImage = document.getElementById('viewerImage');
-            const caption = document.getElementById('imageCaption');
-            const img = element.querySelector('img');
-            const title = element.querySelector('h3').textContent;
-            const desc = element.querySelector('p').textContent;
-
-            viewerImage.src = img.src;
-            viewerImage.alt = img.alt;
-            caption.textContent = `${title} - ${desc}`;
-            viewer.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideImage() {
-            const viewer = document.getElementById('imageViewer');
-            viewer.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        // 添加键盘事件监听
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                hideImage();
-            }
-        });
-
-        // 为所有成就卡片添加悬停动画
-        document.querySelectorAll('.achievement-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                anime({
-                    targets: card,
-                    scale: 1.05,
-                    duration: 300,
-                    easing: 'easeOutExpo'
-                });
-            });
-
-            card.addEventListener('mouseleave', () => {
-                anime({
-                    targets: card,
-                    scale: 1,
-                    duration: 300,
-                    easing: 'easeOutExpo'
-                });
-            });
-        });
-
-        // 历史问题数据
+        // 问答系统
         const questions = [
             {
                 question: "中华人民共和国成立于哪一年？",
@@ -691,374 +388,157 @@
                 explanation: "1978年12月，党的十一届三中全会召开，确立改革开放基本国策。"
             },
             {
-                question: "第一颗原子弹爆炸成功的年份是？",
-                options: ["1962年", "1963年", "1964年", "1965年"],
-                correct: 2,
-                explanation: "1964年10月16日，中国第一颗原子弹爆炸成功，成为世界第五个核国家。"
-            },
-            {
-                question: "东方红一号卫星发射成功的年份是？",
-                options: ["1969年", "1970年", "1971年", "1972年"],
-                correct: 1,
-                explanation: "1970年4月24日，"东方红一号"卫星发射成功，中国成为世界第五个独立发射人造卫星的国家。"
-            },
-            {
-                question: "中国恢复联合国合法席位的年份是？",
-                options: ["1970年", "1971年", "1972年", "1973年"],
-                correct: 1,
-                explanation: "1971年10月25日，第26届联合国大会以压倒性多数通过决议，恢复中华人民共和国在联合国的一切合法权利。"
-            },
-            {
-                question: "中国第一个五年计划开始于哪一年？",
-                options: ["1951年", "1952年", "1953年", "1954年"],
-                correct: 2,
-                explanation: "1953年开始实施第一个五年计划，这是中国历史上第一个社会主义建设的五年计划。"
-            },
-            {
-                question: "中国首次载人航天飞行成功的年份是？",
-                options: ["2001年", "2002年", "2003年", "2004年"],
-                correct: 2,
-                explanation: "2003年10月15日，神舟五号载人飞船成功发射，杨利伟成为中国首位太空人。"
-            },
-            {
-                question: "北京奥运会举办的年份是？",
-                options: ["2006年", "2007年", "2008年", "2009年"],
-                correct: 2,
-                explanation: "2008年8月8日，第29届夏季奥林匹克运动会在北京开幕，这是中国首次举办奥运会。"
-            },
-            {
                 question: "中国加入世界贸易组织(WTO)的年份是？",
                 options: ["2000年", "2001年", "2002年", "2003年"],
                 correct: 1,
                 explanation: "2001年12月11日，中国正式加入世界贸易组织，成为第143个成员国。"
-            },
-            {
-                question: "香港回归祖国的年份是？",
-                options: ["1996年", "1997年", "1998年", "1999年"],
-                correct: 1,
-                explanation: "1997年7月1日，中国恢复对香港行使主权，香港特别行政区正式成立。"
             }
         ];
 
         let currentQuestion = 0;
-        let correctAnswers = 0;
-        let totalAnswered = 0;
+        let stats = {
+            correct: 0,
+            incorrect: 0
+        };
 
+        // 加载问题
         function loadQuestion() {
+            const question = questions[currentQuestion];
+            const questionElement = document.getElementById('question');
+            const optionsElement = document.getElementById('options');
+            const explanationElement = document.getElementById('explanation');
+
+            if (!questionElement || !optionsElement || !explanationElement) {
+                console.error('找不到必要的DOM元素');
+                return;
+            }
+
             try {
-                const question = questions[currentQuestion];
-                document.getElementById('questionText').textContent = question.question;
-                const optionsContainer = document.getElementById('optionsContainer');
-                optionsContainer.innerHTML = '';
+                // 显示问题
+                questionElement.innerHTML = `<p class="text-lg font-bold">${question.question}</p>`;
                 
-                question.options.forEach((option, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'btn btn-outline w-full text-white';
-                    button.textContent = option;
-                    button.onclick = () => selectOption(index);
-                    optionsContainer.appendChild(button);
+                // 生成选项
+                const optionsHtml = question.options.map((option, index) => 
+                    `<div class="quiz-option" data-index="${index}">${option}</div>`
+                ).join('');
+                
+                optionsElement.innerHTML = optionsHtml;
+                explanationElement.classList.add('hidden');
+                
+                // 添加选项点击事件
+                document.querySelectorAll('.quiz-option').forEach(option => {
+                    option.addEventListener('click', selectOption);
                 });
             } catch (error) {
                 console.error('加载问题时出错:', error);
-                document.getElementById('questionText').textContent = '加载问题时出错，请刷新页面重试';
+                questionElement.innerHTML = '<p class="text-red-500">加载问题时出错，请刷新页面重试</p>';
             }
         }
 
-        let selectedOption = null;
-
-        function selectOption(index) {
-            document.querySelectorAll('#optionsContainer button').forEach((btn, i) => {
-                btn.classList.remove('bg-[var(--china-red)]');
-                if (i === index) {
-                    btn.classList.add('bg-[var(--china-red)]');
-                }
-            });
-            selectedOption = index;
+        // 选择答案
+        function selectOption(e) {
+            try {
+                document.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            } catch (error) {
+                console.error('选择答案时出错:', error);
+            }
         }
 
-        function checkAnswer() {
+        // 提交答案
+        function submitAnswer() {
             try {
-                if (selectedOption === null) {
-                    Swal.fire({
-                        title: '请选择答案',
-                        icon: 'warning',
-                        confirmButtonColor: 'var(--china-red)'
-                    });
+                const selected = document.querySelector('.quiz-option.selected');
+                if (!selected) {
+                    alert('请选择一个答案');
                     return;
                 }
 
-                const correct = questions[currentQuestion].correct === selectedOption;
-                if (correct) correctAnswers++;
-                totalAnswered++;
+                const selectedIndex = parseInt(selected.dataset.index);
+                const question = questions[currentQuestion];
+                const explanationElement = document.getElementById('explanation');
 
-                Swal.fire({
-                    title: correct ? '回答正确！' : '回答错误',
-                    text: questions[currentQuestion].explanation,
-                    icon: correct ? 'success' : 'error',
-                    confirmButtonColor: 'var(--china-red)'
-                }).then(() => {
+                if (selectedIndex === question.correct) {
+                    stats.correct++;
+                    selected.classList.add('correct');
+                } else {
+                    stats.incorrect++;
+                    selected.classList.add('incorrect');
+                    document.querySelectorAll('.quiz-option')[question.correct].classList.add('correct');
+                }
+
+                explanationElement.innerHTML = question.explanation;
+                explanationElement.classList.remove('hidden');
+
+                updateStats();
+                
+                // 延迟加载下一题
+                setTimeout(() => {
                     currentQuestion = (currentQuestion + 1) % questions.length;
-                    selectedOption = null;
                     loadQuestion();
-                    updateQuizStats();
-                });
+                }, 2000);
             } catch (error) {
-                console.error('检查答案时出错:', error);
-                Swal.fire({
-                    title: '发生错误',
-                    text: '请刷新页面重试',
-                    icon: 'error',
-                    confirmButtonColor: 'var(--china-red)'
-                });
+                console.error('提交答案时出错:', error);
+                alert('提交答案时出错，请重试');
             }
         }
 
-        function updateQuizStats() {
+        // 更新统计
+        function updateStats() {
             try {
-                const statsChart = echarts.init(document.getElementById('quizStats'));
-                statsChart.setOption({
-                    title: { 
-                        text: '答题统计', 
-                        textStyle: { color: '#fff' },
-                        subtext: `总答题数：${totalAnswered}  正确率：${((correctAnswers/totalAnswered)*100 || 0).toFixed(1)}%`,
-                        subtextStyle: { color: '#fff' }
+                const ctx = document.getElementById('stats-chart').getContext('2d');
+                if (!ctx) {
+                    console.error('找不到统计图表元素');
+                    return;
+                }
+
+                // 销毁现有图表
+                const existingChart = Chart.getChart(ctx.canvas);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+
+                // 创建新图表
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['正确', '错误'],
+                        datasets: [{
+                            data: [stats.correct, stats.incorrect],
+                            backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)']
+                        }]
                     },
-                    tooltip: { 
-                        trigger: 'item',
-                        formatter: '{b}: {c}题 ({d}%)'
-                    },
-                    series: [{
-                        type: 'pie',
-                        radius: ['40%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        label: {
-                            show: true,
-                            color: '#fff',
-                            formatter: '{b}: {c}题\n{d}%'
-                        },
-                        data: [
-                            { 
-                                value: correctAnswers, 
-                                name: '正确', 
-                                itemStyle: { 
-                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                        { offset: 0, color: '#52c41a' },
-                                        { offset: 1, color: '#28a745' }
-                                    ])
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#FFD700'
                                 }
-                            },
-                            { 
-                                value: totalAnswered - correctAnswers, 
-                                name: '错误', 
-                                itemStyle: { 
-                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                        { offset: 0, color: '#ff4d4f' },
-                                        { offset: 1, color: '#cf1322' }
-                                    ])
-                                }
-                            }
-                        ],
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
                             }
                         }
-                    }],
-                    backgroundColor: 'transparent'
+                    }
                 });
             } catch (error) {
-                console.error('更新统计图表时出错:', error);
-                document.getElementById('quizStats').innerHTML = '<div class="chart-error">加载统计数据失败</div>';
+                console.error('更新统计时出错:', error);
             }
         }
 
-        // 反馈处理
-        function handleFeedback(event) {
-            event.preventDefault();
-            const form = event.target;
-            const name = form.querySelector('input').value;
-            const feedback = form.querySelector('textarea').value;
-
-            try {
-                // 这里可以添加实际的反馈提交逻辑
-                console.log('反馈信息:', { name, feedback });
-                
-                Swal.fire({
-                    title: '感谢您的反馈！',
-                    text: '我们会认真考虑您的建议',
-                    icon: 'success',
-                    confirmButtonColor: 'var(--china-red)'
-                });
-
-                form.reset();
-            } catch (error) {
-                console.error('提交反馈时出错:', error);
-                Swal.fire({
-                    title: '提交失败',
-                    text: '请稍后重试',
-                    icon: 'error',
-                    confirmButtonColor: 'var(--china-red)'
-                });
-            }
-        }
-
-        // 页面加载完成后初始化
+        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 loadQuestion();
-                updateQuizStats();
-                // ... existing initialization code ...
+                const submitButton = document.getElementById('submit-answer');
+                if (submitButton) {
+                    submitButton.addEventListener('click', submitAnswer);
+                }
+                updateStats();
             } catch (error) {
-                console.error('页面初始化时出错:', error);
-                Swal.fire({
-                    title: '页面加载出错',
-                    text: '请刷新页面重试',
-                    icon: 'error',
-                    confirmButtonColor: 'var(--china-red)'
-                });
+                console.error('初始化时出错:', error);
             }
-        });
-
-        // 移动端菜单控制
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navMenu = document.querySelector('.nav-menu');
-        let menuOpen = false;
-
-        mobileMenuBtn.addEventListener('click', () => {
-            menuOpen = !menuOpen;
-            navMenu.classList.toggle('active');
-            mobileMenuBtn.innerHTML = menuOpen 
-                ? '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
-                : '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>';
-        });
-
-        // 点击导航链接后关闭菜单
-        document.querySelectorAll('.nav-menu .btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    navMenu.classList.remove('active');
-                    menuOpen = false;
-                    mobileMenuBtn.innerHTML = '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>';
-                }
-            });
-        });
-
-        // 下拉刷新功能
-        let touchStartY = 0;
-        let pullStarted = false;
-        const pullToRefresh = document.querySelector('.pull-to-refresh');
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            const touchY = e.touches[0].clientY;
-            const scroll = window.scrollY;
-            
-            if (scroll <= 0 && touchY > touchStartY && !pullStarted) {
-                pullStarted = true;
-                pullToRefresh.classList.add('active');
-                e.preventDefault();
-            }
-        });
-
-        document.addEventListener('touchend', () => {
-            if (pullStarted) {
-                pullStarted = false;
-                pullToRefresh.classList.remove('active');
-                location.reload();
-            }
-        });
-
-        // 图表响应式调整
-        function updateChartSize() {
-            const charts = [gdpChart, tradeChart, educationChart, cultureChart, statsChart].filter(Boolean);
-            charts.forEach(chart => {
-                try {
-                    chart.resize();
-                } catch (error) {
-                    console.error('调整图表大小时出错:', error);
-                }
-            });
-        }
-
-        // 监听屏幕旋转
-        window.addEventListener('orientationchange', () => {
-            setTimeout(updateChartSize, 300);
-        });
-
-        // 优化触摸事件
-        document.querySelectorAll('.achievement-card').forEach(card => {
-            card.addEventListener('touchstart', () => {
-                card.style.transform = 'scale(0.98)';
-            });
-
-            card.addEventListener('touchend', () => {
-                card.style.transform = '';
-            });
-        });
-
-        // 优化移动端图片查看
-        let touchStartX = 0;
-        let currentImageIndex = 0;
-        const images = document.querySelectorAll('.gallery-image');
-
-        document.getElementById('imageViewer').addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        });
-
-        document.getElementById('imageViewer').addEventListener('touchmove', (e) => {
-            const touchX = e.touches[0].clientX;
-            const diff = touchStartX - touchX;
-
-            if (Math.abs(diff) > 50) {
-                e.preventDefault();
-                if (diff > 0 && currentImageIndex < images.length - 1) {
-                    currentImageIndex++;
-                    showImageByIndex(currentImageIndex);
-                } else if (diff < 0 && currentImageIndex > 0) {
-                    currentImageIndex--;
-                    showImageByIndex(currentImageIndex);
-                }
-                touchStartX = touchX;
-            }
-        });
-
-        function showImageByIndex(index) {
-            const image = images[index];
-            if (image) {
-                const viewer = document.getElementById('imageViewer');
-                const viewerImage = document.getElementById('viewerImage');
-                viewerImage.src = image.src;
-                viewerImage.alt = image.alt;
-            }
-        }
-
-        // 初始化移动端优化
-        document.addEventListener('DOMContentLoaded', () => {
-            // 检测是否为移动设备
-            if (window.innerWidth <= 768) {
-                mobileMenuBtn.style.display = 'block';
-            }
-
-            // 优化图表尺寸
-            updateChartSize();
-        });
-
-        // 确保时间线在所有设备上都可见
-        document.addEventListener('DOMContentLoaded', () => {
-            const timelineSection = document.getElementById('timeline');
-            if (timelineSection) {
-                timelineSection.style.display = 'block';
-            }
-            // ... existing initialization code ...
         });
     </script>
 </body>
