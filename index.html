@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新中国发展历程 - 互动展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+        
+        :root {
+            --china-red: #DE2910;
+            --china-gold: #FFDE00;
+            --deep-red: #8B0000;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, var(--deep-red) 0%, #1a1a1a 100%);
+            color: #ffffff;
+        }
+        
+        .achievement-card {
+            background: rgba(222, 41, 16, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 222, 0, 0.1);
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(222, 41, 16, 0.2);
+            border-color: var(--china-gold);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(139, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                        url('https://images.unsplash.com/photo-1577706881850-bf7c7d8906a5?ixlib=rb-4.0.3') center/cover;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--china-red) 0%, var(--china-gold) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: var(--china-gold);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--china-red);
+            border: 2px solid var(--china-gold);
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="progress-bar" style="width: 0%"></div>
+    
+    <nav class="fixed top-0 w-full bg-black bg-opacity-50 backdrop-blur-md z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--china-red)] to-[var(--china-gold)]">
+                    新中国发展历程
+                </h1>
+                <div class="space-x-4">
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('timeline')">重大事件</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">历史成就</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">文化建设</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="text-center">
+            <h1 class="text-6xl font-bold mb-6 animate-text bg-gradient-to-r from-[var(--china-red)] via-[var(--china-gold)] to-[var(--china-red)] bg-clip-text text-transparent">
+                新中国发展历程
+            </h1>
+            <p class="text-xl text-gray-300">见证七十余载辉煌历程</p>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-20">
+        <section id="timeline" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">重大历史事件</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1949年10月1日</h3>
+                        <p class="text-white">中华人民共和国成立，毛泽东主席在天安门城楼上宣布开国大典。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1956年</h3>
+                        <p class="text-white">社会主义改造基本完成，确立社会主义基本制度。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1964年10月16日</h3>
+                        <p class="text-white">中国第一颗原子弹爆炸成功，成为世界第五个核国家。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">1978年12月</h3>
+                        <p class="text-white">十一届三中全会召开，确立改革开放基本国策。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2001年12月11日</h3>
+                        <p class="text-white">中国正式加入世界贸易组织(WTO)。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2008年8月8日</h3>
+                        <p class="text-white">北京奥运会开幕，展现中国大国风采。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="bg-opacity-20 bg-red-900 p-6 rounded-lg">
+                        <h3 class="text-2xl font-bold text-[var(--china-gold)]">2020年</h3>
+                        <p class="text-white">全面建成小康社会，实现第一个百年奋斗目标。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">历史性成就</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">工业发展</h3>
+                    <p class="text-gray-300">从"两弹一星"到"神舟飞天"，从"嫦娥探月"到"天问探火"，见证中国航天工业腾飞。</p>
+                </div>
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">脱贫攻坚</h3>
+                    <p class="text-gray-300">8年时间，近1亿人脱贫，832个贫困县全部摘帽，创造人类减贫史奇迹。</p>
+                </div>
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">科技创新</h3>
+                    <p class="text-gray-300">从5G技术到量子通信，从高铁技术到北斗导航，引领全球科技创新。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="economy" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">经济发展</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="chart-container h-96" id="gdpChart"></div>
+                <div class="chart-container h-96" id="tradeChart"></div>
+            </div>
+        </section>
+
+        <section id="culture" class="mb-20">
+            <h2 class="text-4xl font-bold mb-10 text-center">文化建设</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">教育发展</h3>
+                    <div id="educationChart" class="h-80"></div>
+                </div>
+                <div class="achievement-card p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-[var(--china-gold)]">文化传承</h3>
+                    <div id="cultureChart" class="h-80"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 添加页脚 -->
+    <footer class="bg-black bg-opacity-50 backdrop-blur-md py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">关于本站</h3>
+                    <p class="text-gray-300">致力于展现新中国发展历程<br>见证伟大复兴征程</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">数据来源</h3>
+                    <p class="text-gray-300">国家统计局<br>中国政府网<br>人民网</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-[var(--china-gold)] mb-4">联系我们</h3>
+                    <p class="text-gray-300">邮箱：info@example.com<br>电话：123-456-7890</p>
+                </div>
+            </div>
+            <div class="text-center mt-8 pt-8 border-t border-gray-800">
+                <p class="text-gray-400">© 2023 新中国发展历程 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-[var(--china-red)] hover:bg-[var(--deep-red)] text-white p-4 rounded-full shadow-lg opacity-0 transition-all duration-300 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <script>
+        // 页面滚动进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector(".progress-bar").style.width = scrolled + "%";
+
+            // 时间线动画
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                const rect = item.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    item.classList.add('visible');
+                }
+            });
+        });
+
+        // 平滑滚动
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 图表初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // GDP增长图表
+            const gdpChart = echarts.init(document.getElementById('gdpChart'));
+            gdpChart.setOption({
+                title: { text: 'GDP增长趋势（单位：亿元）', textStyle: { color: '#fff' } },
+                tooltip: { trigger: 'axis' },
+                xAxis: { type: 'category', data: ['1949', '1960', '1980', '2000', '2010', '2020'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    data: [100, 1500, 4500, 99776, 412119, 1015986],
+                    type: 'line',
+                    smooth: true,
+                    areaStyle: {
+                        opacity: 0.3,
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: '#DE2910' },
+                            { offset: 1, color: '#8B0000' }
+                        ])
+                    },
+                    itemStyle: { color: '#DE2910' }
+                }],
+                backgroundColor: 'transparent',
+                textStyle: { color: '#fff' }
+            });
+
+            // 对外贸易图表
+            const tradeChart = echarts.init(document.getElementById('tradeChart'));
+            tradeChart.setOption({
+                title: { text: '对外贸易发展（单位：亿美元）', textStyle: { color: '#fff' } },
+                tooltip: { trigger: 'axis' },
+                xAxis: { type: 'category', data: ['1950', '1980', '2000', '2010', '2020'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    name: '进口',
+                    type: 'bar',
+                    data: [11.8, 200, 2250, 13948, 20556],
+                    itemStyle: { color: '#DE2910' }
+                }, {
+                    name: '出口',
+                    type: 'bar',
+                    data: [5.5, 181, 2492, 15778, 25910],
+                    itemStyle: { color: '#FFDE00' }
+                }],
+                backgroundColor: 'transparent',
+                textStyle: { color: '#fff' }
+            });
+
+            // 教育发展图表
+            const educationChart = echarts.init(document.getElementById('educationChart'));
+            educationChart.setOption({
+                title: { text: '2020年教育事业发展（万人）', textStyle: { color: '#fff' } },
+                tooltip: { trigger: 'item' },
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    data: [
+                        { value: 3268, name: '高等教育在校生' },
+                        { value: 4803, name: '中等教育在校生' },
+                        { value: 10712, name: '义务教育在校生' }
+                    ],
+                    itemStyle: {
+                        color: function(params) {
+                            const colors = ['#DE2910', '#FFDE00', '#8B0000'];
+                            return colors[params.dataIndex];
+                        }
+                    }
+                }],
+                backgroundColor: 'transparent',
+                textStyle: { color: '#fff' }
+            });
+
+            // 文化发展图表
+            const cultureChart = echarts.init(document.getElementById('cultureChart'));
+            cultureChart.setOption({
+                title: { text: '文化产业增加值（亿元）', textStyle: { color: '#fff' } },
+                tooltip: { trigger: 'axis' },
+                xAxis: { type: 'category', data: ['2012', '2014', '2016', '2018', '2020'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    data: [18587, 23940, 30785, 38737, 44363],
+                    type: 'line',
+                    smooth: true,
+                    itemStyle: { color: '#DE2910' }
+                }],
+                backgroundColor: 'transparent',
+                textStyle: { color: '#fff' }
+            });
+
+            // 响应式调整
+            window.addEventListener('resize', () => {
+                gdpChart.resize();
+                tradeChart.resize();
+                educationChart.resize();
+                cultureChart.resize();
+            });
+
+            // 返回顶部按钮逻辑
+            const backToTopButton = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 500) {
+                    backToTopButton.style.opacity = '1';
+                } else {
+                    backToTopButton.style.opacity = '0';
+                }
+            });
+
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 添加页面载入动画
+            document.addEventListener('DOMContentLoaded', () => {
+                // 原有的图表初始化代码保持不变
+                // ... existing chart initialization code ...
+
+                // 添加入场动画
+                anime({
+                    targets: '.achievement-card',
+                    translateY: [50, 0],
+                    opacity: [0, 1],
+                    duration: 1500,
+                    delay: anime.stagger(200),
+                    easing: 'easeOutExpo'
+                });
+
+                // 为标题添加打字机效果
+                const titles = document.querySelectorAll('h2');
+                titles.forEach(title => {
+                    const text = title.textContent;
+                    title.textContent = '';
+                    let index = 0;
+                    const interval = setInterval(() => {
+                        if (index < text.length) {
+                            title.textContent += text[index];
+                            index++;
+                        } else {
+                            clearInterval(interval);
+                        }
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
