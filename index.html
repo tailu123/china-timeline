@@ -245,7 +245,7 @@
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('timeline')">重大事件</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('achievements')">历史成就</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('economy')">经济发展</button>
-                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">文化建设</button>
+                    <button class="btn btn-ghost btn-sm" onclick="scrollToSection('culture')">��化建设</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('quiz')">知识问答</button>
                     <button class="btn btn-ghost btn-sm" onclick="scrollToSection('feedback')">意见反馈</button>
                 </div>
@@ -709,34 +709,34 @@
                 explanation: "1971年10月25日，第26届联合国大会以压倒性多数通过决议，恢复中华人民共和国在联合国的一切合法权利。"
             },
             {
-                question: "中国第一艘航空母舰辽宁舰服役的年份是？",
-                options: ["2010年", "2011年", "2012年", "2013年"],
+                question: "中国第一个五年计划开始于哪一年？",
+                options: ["1951年", "1952年", "1953年", "1954年"],
                 correct: 2,
-                explanation: "2012年9月25日，中国第一艘航空母舰辽宁舰正式交付海军使用。"
+                explanation: "1953年开始实施第一个五年计划，这是中国历史上第一个社会主义建设的五年计划。"
             },
             {
-                question: "神舟五号实现中国首次载人航天飞行的年份是？",
+                question: "中国首次载人航天飞行成功的年份是？",
                 options: ["2001年", "2002年", "2003年", "2004年"],
                 correct: 2,
-                explanation: "2003年10月15日，神舟五号成功发射，杨利伟成为中国首位太空人。"
+                explanation: "2003年10月15日，神舟五号载人飞船成功发射，杨利伟成为中国首位太空人。"
             },
             {
                 question: "北京奥运会举办的年份是？",
                 options: ["2006年", "2007年", "2008年", "2009年"],
                 correct: 2,
-                explanation: "2008年8月8日，第29届夏季奥林匹克运动会在北京开幕。"
+                explanation: "2008年8月8日，第29届夏季奥林匹克运动会在北京开幕，这是中国首次举办奥运会。"
             },
             {
                 question: "中国加入世界贸易组织(WTO)的年份是？",
                 options: ["2000年", "2001年", "2002年", "2003年"],
                 correct: 1,
-                explanation: "2001年12月11日，中国正式加入世界贸易组织(WTO)。"
+                explanation: "2001年12月11日，中国正式加入世界贸易组织，成为第143个成员国。"
             },
             {
                 question: "香港回归祖国的年份是？",
                 options: ["1996年", "1997年", "1998年", "1999年"],
                 correct: 1,
-                explanation: "1997年7月1日，中国恢复对香港行使主权，香港特别行政区成立。"
+                explanation: "1997年7月1日，中国恢复对香港行使主权，香港特别行政区正式成立。"
             }
         ];
 
@@ -787,14 +787,13 @@
                     return;
                 }
 
-                const question = questions[currentQuestion];
-                const correct = question.correct === selectedOption;
+                const correct = questions[currentQuestion].correct === selectedOption;
                 if (correct) correctAnswers++;
                 totalAnswered++;
 
                 Swal.fire({
                     title: correct ? '回答正确！' : '回答错误',
-                    text: question.explanation,
+                    text: questions[currentQuestion].explanation,
                     icon: correct ? 'success' : 'error',
                     confirmButtonColor: 'var(--china-red)'
                 }).then(() => {
@@ -821,7 +820,7 @@
                     title: { 
                         text: '答题统计', 
                         textStyle: { color: '#fff' },
-                        subtext: `总答题数: ${totalAnswered}  正确率: ${((correctAnswers/totalAnswered)*100 || 0).toFixed(1)}%`,
+                        subtext: `总答题数：${totalAnswered}  正确率：${((correctAnswers/totalAnswered)*100 || 0).toFixed(1)}%`,
                         subtextStyle: { color: '#fff' }
                     },
                     tooltip: { 
